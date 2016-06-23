@@ -17,7 +17,7 @@ import System.Log.Handler.Simple (fileHandler)
 import System.Log.Handler (setFormatter, LogHandler)
 import System.Log.Formatter (simpleLogFormatter)
 import Data.Char (toLower)
-import Data.Maybe
+--import Data.Maybe (maybe)
 
 appName :: String
 appName = "htrans"
@@ -141,7 +141,7 @@ parseLogLevel st = return level
             "error"     -> ERROR
             "critical"  -> CRITICAL
             "alert"     -> ALERT
-            "emergency" -> EMERGENCY
+            _           -> EMERGENCY
 
 parseLogPath :: Monad m => String -> m FilePath
 parseLogPath st = return st
