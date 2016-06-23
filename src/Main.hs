@@ -19,6 +19,7 @@ import System.Log.Formatter (simpleLogFormatter)
 import Data.Char (toLower)
 import Data.Maybe
 
+appName :: String
 appName = "htrans"
 
 main :: IO ()
