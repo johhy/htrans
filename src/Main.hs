@@ -18,6 +18,7 @@ import System.Log.Handler (setFormatter, LogHandler)
 import System.Log.Formatter (simpleLogFormatter)
 import System.IO (stderr)
 import Data.Char (toLower)
+import Data.Maybe
 
 appName = "htrans"
 
@@ -26,11 +27,22 @@ main = cli >>= doTrans >>= exitWith
 
 doTrans :: Config -> IO ExitCode
 doTrans cfg = do
+
   setAppLogger $ logLevel cfg
-  debugM appName "Start app"
+  debugM appName "---- Start translation! ----"
+  debugM appName ("Get configuration:" ++ show cfg)
+  
   res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
+
+  infoM appName ("input:"  ++ unpackMaybe (validateText (text cfg)) ++
+                " output:" ++ unpackMaybe res)
+
   maybe (return $ ExitFailure 1)
         ((>> return ExitSuccess) . I.putStrLn) res
+
+  where unpackMaybe Nothing  = "No text"
+        unpackMaybe (Just x) = T.unpack x
+            
 
 setAppLogger :: Priority -> IO ()
 setAppLogger priority = do
@@ -39,31 +51,28 @@ setAppLogger priority = do
   updateGlobalLogger appName (addHandler cf . setLevel priority)
   
 setCustomFormatter :: System.Log.Handler.LogHandler a => a -> a
-setCustomFormatter x =
-  setFormatter x f
+setCustomFormatter h =
+  setFormatter h f
      where f = simpleLogFormatter "[$time : $prio] : $msg "
   
-getStr :: [T.Text] -> Maybe T.Text
-getStr txt =
-  if not (null txt)
-                then Just txt'
-                else Nothing
-  where txt' = head txt
+validateText :: [T.Text] -> Maybe T.Text
+validateText []    = Nothing
+validateText (x:_) = if T.null x then Nothing else Just x
 
 getTranslate :: APIKey -> Language -> Language -> [T.Text] -> IO (Maybe T.Text)
-getTranslate k f t txt = 
-  runYandexApiSession (configureApi k) $
-  do (msg,_,_) <-translate (Just f) t def txt
-     liftIO $ return (getStr msg)
+getTranslate key' from' to' text' = 
+  runYandexApiSession (configureApi key') $
+  do (result,_,_) <-translate (Just from') to' def text'
+     liftIO $ return (validateText result)
 
 data Config = Config
   {
-    text       :: [T.Text]
+    text       :: [T.Text] 
   , from       :: Language
   , to         :: Language
   , key        :: APIKey
   , logLevel   :: Priority 
-  }
+  } deriving Show
 
 opts :: Parser Config
 opts = Config
