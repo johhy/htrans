@@ -21,4 +21,5 @@ executable htrans
                        data-default-class,
                        transformers,
                        text,
-                       optparse-applicative
+                       optparse-applicative,
+                       hslogger == 1.2.10
