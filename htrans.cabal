@@ -15,7 +15,8 @@ cabal-version:       >=1.10
 executable htrans
   hs-source-dirs:      src
   main-is:             Main.hs
-  other-modules:       Htrans.Logger
+  other-modules:       Htrans.Logger,
+                       Htrans.Cli
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
                        yandex-translate,
