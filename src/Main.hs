@@ -36,6 +36,7 @@ doTrans cfg = do
 
   infoM appName ("input:"  ++ unpackMaybe (validateText (text cfg)) ++
                 " output:" ++ unpackMaybe res)
+  debugM appName "---- Stop translation! -----"
 
   maybe (return $ ExitFailure 1)
         ((>> return ExitSuccess) . I.putStrLn) res
