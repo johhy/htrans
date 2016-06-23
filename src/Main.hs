@@ -9,14 +9,13 @@ import qualified Data.Text.IO as I
 import Control.Monad.IO.Class
 import Options.Applicative (Parser, execParser, value, fullDesc,
                             header, help, helper, info, long, metavar,
-                            option, progDesc,short, str, 
+                            option, progDesc,short, str,
                             (<>))
 import System.Exit (ExitCode(..), exitWith)
 import System.Log.Logger
-import System.Log.Handler.Simple (streamHandler)
+import System.Log.Handler.Simple (fileHandler)
 import System.Log.Handler (setFormatter, LogHandler)
 import System.Log.Formatter (simpleLogFormatter)
-import System.IO (stderr)
 import Data.Char (toLower)
 import Data.Maybe
 
@@ -28,10 +27,10 @@ main = cli >>= doTrans >>= exitWith
 doTrans :: Config -> IO ExitCode
 doTrans cfg = do
 
-  setAppLogger $ logLevel cfg
+  setAppLogger (logPath cfg) (logLevel cfg)
   debugM appName "---- Start translation! ----"
   debugM appName ("Get configuration:" ++ show cfg)
-  
+
   res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
 
   infoM appName ("input:"  ++ unpackMaybe (validateText (text cfg)) ++
@@ -42,36 +41,37 @@ doTrans cfg = do
 
   where unpackMaybe Nothing  = "No text"
         unpackMaybe (Just x) = T.unpack x
-            
 
-setAppLogger :: Priority -> IO ()
-setAppLogger priority = do
-  sh <- streamHandler stderr priority
-  let cf = setCustomFormatter sh
-  updateGlobalLogger appName (addHandler cf . setLevel priority)
-  
+
+setAppLogger :: FilePath -> Priority -> IO ()
+setAppLogger logPath priority = do
+  fHandler <- fileHandler logPath priority
+  let cFormatter = setCustomFormatter fHandler
+  updateGlobalLogger appName (addHandler cFormatter . setLevel priority)
+
 setCustomFormatter :: System.Log.Handler.LogHandler a => a -> a
 setCustomFormatter h =
   setFormatter h f
      where f = simpleLogFormatter "[$time : $prio] : $msg "
-  
+
 validateText :: [T.Text] -> Maybe T.Text
 validateText []    = Nothing
 validateText (x:_) = if T.null x then Nothing else Just x
 
 getTranslate :: APIKey -> Language -> Language -> [T.Text] -> IO (Maybe T.Text)
-getTranslate key' from' to' text' = 
+getTranslate key' from' to' text' =
   runYandexApiSession (configureApi key') $
   do (result,_,_) <-translate (Just from') to' def text'
      liftIO $ return (validateText result)
 
 data Config = Config
   {
-    text       :: [T.Text] 
+    text       :: [T.Text]
   , from       :: Language
   , to         :: Language
   , key        :: APIKey
-  , logLevel   :: Priority 
+  , logLevel   :: Priority
+  , logPath    :: FilePath
   } deriving Show
 
 opts :: Parser Config
@@ -106,6 +106,13 @@ opts = Config
       <>  help ("Log level on stderr (default: EMERGENCY) avialable:\n" ++
                 "EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG\n" ++
                 "To save log in file you can use stdout (>>out) or stderr (2>>err)"))
+  <*> option (str >>= parseLogPath)
+         (long "logpath"
+      <>  short 'p'
+      <>  metavar "LogPath"
+      <>  value "./htrans.log"
+      <>  help "Path and name to log file (default: ./htrans.log)")
+
 cli :: IO Config
 cli = execParser
     $ info (helper <*> opts)
@@ -134,3 +141,6 @@ parseLogLevel st = return level
             "critical"  -> CRITICAL
             "alert"     -> ALERT
             "emergency" -> EMERGENCY
+
+parseLogPath :: Monad m => String -> m FilePath
+parseLogPath st = return st
