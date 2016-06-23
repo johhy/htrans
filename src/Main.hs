@@ -12,15 +12,10 @@ import Options.Applicative (Parser, execParser, value, fullDesc,
                             option, progDesc,short, str,
                             (<>))
 import System.Exit (ExitCode(..), exitWith)
-import System.Log.Logger
-import System.Log.Handler.Simple (fileHandler)
-import System.Log.Handler (setFormatter, LogHandler)
-import System.Log.Formatter (simpleLogFormatter)
 import Data.Char (toLower)
---import Data.Maybe (maybe)
-
-appName :: String
-appName = "htrans"
+import Htrans.Logger (setAppLogger, appName, logStartAppDebug,
+                      logStopAppDebug, logConfigDebug, logInOutInfo,
+                      Priority(..))
 
 main :: IO ()
 main = cli >>= doTrans >>= exitWith
@@ -29,14 +24,13 @@ doTrans :: Config -> IO ExitCode
 doTrans cfg = do
 
   setAppLogger (logPath cfg) (logLevel cfg)
-  debugM appName "---- Start translation! ----"
-  debugM appName ("Get configuration:" ++ show cfg)
+  logStartAppDebug
+  logConfigDebug cfg
 
   res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
 
-  infoM appName ("input:"  ++ unpackMaybe (validateText (text cfg)) ++
-                " output:" ++ unpackMaybe res)
-  debugM appName "---- Stop translation! -----"
+  logInOutInfo (unpackMaybe (validateText (text cfg))) (unpackMaybe res)
+  logStopAppDebug
 
   maybe (return $ ExitFailure 1)
         ((>> return ExitSuccess) . I.putStrLn) res
@@ -44,17 +38,6 @@ doTrans cfg = do
   where unpackMaybe Nothing  = "No text"
         unpackMaybe (Just x) = T.unpack x
 
-
-setAppLogger :: FilePath -> Priority -> IO ()
-setAppLogger logPath priority = do
-  fHandler <- fileHandler logPath priority
-  let cFormatter = setCustomFormatter fHandler
-  updateGlobalLogger appName (addHandler cFormatter . setLevel priority)
-
-setCustomFormatter :: System.Log.Handler.LogHandler a => a -> a
-setCustomFormatter h =
-  setFormatter h f
-     where f = simpleLogFormatter "[$time : $prio] : $msg "
 
 validateText :: [T.Text] -> Maybe T.Text
 validateText []    = Nothing
