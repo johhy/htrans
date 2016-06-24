@@ -96,5 +96,5 @@ parseLogLevel st = return level
                       _           -> EMERGENCY
 
 parseLogPath :: Monad m => String -> m FilePath
-parseLogPath st = return st
+parseLogPath = return
 
