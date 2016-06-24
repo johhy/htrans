@@ -30,12 +30,16 @@ setCustomFormatter h = setFormatter h f
     where f = simpleLogFormatter "[$time : $prio] : $msg "
 
 
+logStartAppDebug :: IO ()
 logStartAppDebug = debugM appName "---- Start translation! ----"
 
+logConfigDebug :: Show a => a -> IO ()
 logConfigDebug cfg = debugM appName ("Get configuration:" ++ show cfg)
 
+logInOutInfo :: [Char] -> [Char] -> IO ()
 logInOutInfo input output = infoM appName ("input:"  ++ input ++
                                           " output:" ++ output)
 
+logStopAppDebug :: IO ()
 logStopAppDebug = debugM appName "---- Stop translation! -----"
 
