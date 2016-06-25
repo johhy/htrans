@@ -2,15 +2,13 @@
 
 module Main where
 
-import Network.Yandex.Translate
-import Data.Default.Class
-import qualified Data.Text as T
+import qualified Data.Text as T 
 import qualified Data.Text.IO as I
-import Control.Monad.IO.Class
 import System.Exit (ExitCode(..), exitWith)
-import Htrans.Logger (setAppLogger, appName, logStartAppDebug,
+import Htrans.Logger (setAppLogger, logStartAppDebug,
                       logStopAppDebug, logConfigDebug, logInOutInfo)
 import Htrans.Cli (Config(..), cli)
+import Htrans.YandexTranslator (getTranslate)
 
 main :: IO ()
 main = cli >>= doTrans >>= exitWith
@@ -38,9 +36,4 @@ validateText :: [T.Text] -> Maybe T.Text
 validateText []    = Nothing
 validateText (x:_) = if T.null x then Nothing else Just x
 
-getTranslate :: APIKey -> Language -> Language -> [T.Text] -> IO (Maybe T.Text)
-getTranslate key' from' to' text' =
-  runYandexApiSession (configureApi key') $
-  do (result,_,_) <-translate (Just from') to' def text'
-     liftIO $ return (validateText result)
 
