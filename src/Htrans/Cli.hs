@@ -13,7 +13,7 @@ import qualified Data.Text as T
 import Options.Applicative (Parser, execParser, value, fullDesc,
                             header, help, helper, info, long, metavar,
                             option, progDesc,short, str, infoOption,
-                            (<>))
+                            (<>), switch)
 import Options.Applicative.Arrows
 import Htrans.Logger (Priority(..))
 import Data.Char (toLower)
@@ -29,6 +29,7 @@ data Config = Config
   , key        :: APIKey
   , logLevel   :: Priority
   , logPath    :: FilePath
+  , onScreen   :: Bool  
   } deriving Show
 
 opts :: Parser Config
@@ -70,6 +71,10 @@ opts = Config
     <>  metavar "LogPath"
     <>  value "./htrans.log"
     <>  help "Path and name to log file (default: ./htrans.log)")
+  <*> switch
+       (long "onscreen"
+    <>  short 's'
+    <>  help "Show result on screen (use libnotify)" )
 
 
 version :: Parser (a -> a)
