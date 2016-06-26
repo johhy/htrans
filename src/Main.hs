@@ -9,9 +9,10 @@ import Htrans.Logger (setAppLogger, logStartAppDebug,
                       logStopAppDebug, logConfigDebug, logInOutInfo)
 import Htrans.Cli (Config(..), cli)
 import Htrans.YandexTranslator (getTranslate)
+import Htrans.XSelector (xselect)
 
 main :: IO ()
-main = cli >>= doTrans >>= exitWith
+main = cli >>= xselect >>= doTrans >>= exitWith
 
 doTrans :: Config -> IO ExitCode
 doTrans cfg = do
@@ -22,7 +23,7 @@ doTrans cfg = do
 
   res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
 
-  logInOutInfo (unpackMaybe (validateText (text cfg))) (unpackMaybe res)
+  logInOutInfo (unpackMaybe (text cfg)) (unpackMaybe res)
   logStopAppDebug
 
   maybe (return $ ExitFailure 1)
@@ -32,8 +33,5 @@ doTrans cfg = do
         unpackMaybe (Just x) = T.unpack x
 
 
-validateText :: [T.Text] -> Maybe T.Text
-validateText []    = Nothing
-validateText (x:_) = if T.null x then Nothing else Just x
 
 

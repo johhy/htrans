@@ -16,7 +16,9 @@ executable htrans
   hs-source-dirs:      src
   main-is:             Main.hs
   other-modules:       Htrans.Logger,
-                       Htrans.Cli
+                       Htrans.Cli,
+                       Htrans.YandexTranslator,
+                       Htrans.XSelector
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
                        yandex-translate,
@@ -24,5 +26,9 @@ executable htrans
                        transformers,
                        text,
                        optparse-applicative,
-                       hslogger == 1.2.10
+                       hslogger == 1.2.10,
+                       X11>=1.3,
+                       unix,
+                       random>=1.0,
+                       utf8-string >= 1.0
 

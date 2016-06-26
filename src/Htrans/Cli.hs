@@ -23,7 +23,7 @@ appVersion = "0.1.1.0"
 
 data Config = Config
   {
-    text       :: [T.Text]
+    text       :: Maybe T.Text
   , from       :: Language
   , to         :: Language
   , key        :: APIKey
@@ -37,7 +37,8 @@ opts = Config
       (long "text"
     <> short 't'
     <> metavar "TEXT"
-    <> help "Text to translate. (reqired)")
+    <> value Nothing
+    <> help "Text to translate.")
   <*> option (str >>= parseLang)
       (long "from"
      <> short 'f'
@@ -94,8 +95,8 @@ cli = execParser
 parseLang :: Monad m => String -> m Language
 parseLang st = return $ T.pack st
 
-parseText :: Monad m => String -> m [T.Text]
-parseText st = return [T.pack st]
+parseText :: Monad m => String -> m (Maybe T.Text)
+parseText st = if  st=="" then return Nothing else return $ Just $ T.pack st
 
 parseAPIKey :: Monad m => String -> m APIKey
 parseAPIKey st = return $ T.pack st
