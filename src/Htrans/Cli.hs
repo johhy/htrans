@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, Arrows #-}
 
 module Htrans.Cli (
   --types
@@ -12,10 +12,14 @@ import Network.Yandex.Translate
 import qualified Data.Text as T
 import Options.Applicative (Parser, execParser, value, fullDesc,
                             header, help, helper, info, long, metavar,
-                            option, progDesc,short, str,
+                            option, progDesc,short, str, infoOption,
                             (<>))
+import Options.Applicative.Arrows
 import Htrans.Logger (Priority(..))
 import Data.Char (toLower)
+
+appVersion :: String
+appVersion = "0.1.1.0"
 
 data Config = Config
   {
@@ -66,13 +70,26 @@ opts = Config
     <>  value "./htrans.log"
     <>  help "Path and name to log file (default: ./htrans.log)")
 
+
+version :: Parser (a -> a)
+version = infoOption appVersion
+      (long "version"
+    <>  short 'v'
+    <>  help "Show version")
+      
+parser :: Parser Config
+parser = runA $ proc () -> do 
+  opt <- asA opts -< ()
+  A version -< opt
+  
 cli :: IO Config
 cli = execParser
-    $ info (helper <*> opts)
+    $ info (helper <*> parser)
       (fullDesc
     <> progDesc ("Translate text from one language to another\n" ++
                 "using Yandex Translate API\n" )
-    <> header "htrans - Yandex Translate API console tool")
+    <> header ("htrans - Yandex Translate API console tool\n" ++
+                "version " ++ appVersion))
 
 parseLang :: Monad m => String -> m Language
 parseLang st = return $ T.pack st
