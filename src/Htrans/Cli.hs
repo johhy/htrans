@@ -61,7 +61,7 @@ opts = Config
     <>  metavar "LogLevel"
     <>  value EMERGENCY
     <>  help ("Log level on stderr (default: EMERGENCY) avialable:\n" ++
-             "EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG\n" ++
+             "EMERGENCY,ERROR,INFO,DEBUG\n" ++
              "To save log in file you can use stdout (>>out) or stderr (2>>err)"))
   <*> option (str >>= parseLogPath)
       (long "logpath"
@@ -105,11 +105,7 @@ parseLogLevel st = return level
     where level = case map toLower st of
                       "debug"     -> DEBUG
                       "info"      -> INFO
-                      "notice"    -> NOTICE
-                      "warning"   -> WARNING
                       "error"     -> ERROR
-                      "critical"  -> CRITICAL
-                      "alert"     -> ALERT
                       _           -> EMERGENCY
 
 parseLogPath :: Monad m => String -> m FilePath
