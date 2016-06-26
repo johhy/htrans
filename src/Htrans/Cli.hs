@@ -47,7 +47,7 @@ opts = Config
      <> help "From language translate (default:English 'en') format ru,en etc.")
   <*> option (str >>= parseLang)
       (long "to"
-     <> short 't'
+     <> short 'o'
      <> metavar "LANG"
      <> value "ru"
      <> help "To language translate (default:Russian 'ru') format ru,en etc.")
