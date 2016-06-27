@@ -19,7 +19,7 @@ import Htrans.Logger (Priority(..))
 import Data.Char (toLower)
 
 appVersion :: String
-appVersion = "0.1.1.0"
+appVersion = "0.2.0.0"
 
 data Config = Config
   {
