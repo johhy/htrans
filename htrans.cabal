@@ -18,7 +18,9 @@ executable htrans
   other-modules:       Htrans.Logger,
                        Htrans.Cli,
                        Htrans.YandexTranslator,
-                       Htrans.XSelector
+                       Htrans.XSelector,
+                       Htrans.EndPoint,
+                       Htrans.Screener
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
                        yandex-translate,
@@ -30,5 +32,6 @@ executable htrans
                        X11>=1.3,
                        unix,
                        random>=1.0,
-                       utf8-string >= 1.0
+                       utf8-string >= 1.0,
+                       libnotify
 
