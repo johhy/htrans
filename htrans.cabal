@@ -33,5 +33,6 @@ executable htrans
                        unix,
                        random>=1.0,
                        utf8-string >= 1.0,
-                       libnotify
+                       libnotify,
+                       filepath
 
