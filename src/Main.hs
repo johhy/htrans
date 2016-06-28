@@ -2,7 +2,6 @@
 
 module Main where
 
-import qualified Data.Text as T 
 import System.Exit (ExitCode(..), exitWith)
 import Htrans.Logger (setAppLogger, logStartAppDebug,
                       logStopAppDebug, logConfigDebug, logInOutInfo)
@@ -23,13 +22,11 @@ doTrans cfg = do
 
   res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
 
-  logInOutInfo (unpackMaybe (text cfg)) (unpackMaybe res)
+  logInOutInfo (text cfg) res
   logStopAppDebug
 
   showResult cfg res
   
-  where unpackMaybe Nothing  = "No text"
-        unpackMaybe (Just x) = T.unpack x
 
 
 

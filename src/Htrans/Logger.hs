@@ -15,6 +15,7 @@ import System.Log.Logger
 import System.Log.Handler.Simple (fileHandler)
 import System.Log.Handler (setFormatter, LogHandler)
 import System.Log.Formatter (simpleLogFormatter)
+import qualified Data.Text as T
 
 appName :: String
 appName = "htrans"
@@ -36,10 +37,12 @@ logStartAppDebug = debugM appName "---- Start translation! ----"
 logConfigDebug :: Show a => a -> IO ()
 logConfigDebug cfg = debugM appName ("Get configuration:" ++ show cfg)
 
-logInOutInfo :: String -> String -> IO ()
-logInOutInfo input output = infoM appName ("input:"  ++ input ++
-                                          " output:" ++ output)
-
+logInOutInfo :: Maybe T.Text -> Maybe T.Text -> IO ()
+logInOutInfo input output = infoM appName $ "input:"  ++ showTxt input ++
+                                          " output:" ++ showTxt output
+     where showTxt = maybe noText T.unpack
+           noText  = "No text"
+           
 logStopAppDebug :: IO ()
 logStopAppDebug = debugM appName "---- Stop translation! -----"
 
