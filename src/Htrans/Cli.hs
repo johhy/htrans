@@ -15,10 +15,10 @@ import Options.Applicative (Parser, execParser, value, fullDesc,
                             option, progDesc,short, str, infoOption,
                             (<>), switch)
 import Options.Applicative.Arrows
-import Htrans.Logger (Priority(..))
 import Data.Char (toLower)
 import Paths_htrans (version)
 import Data.Version (showVersion)
+import System.Log.Logger (Priority(..))
 
 data Config = Config
   {

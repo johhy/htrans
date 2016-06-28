@@ -1,6 +1,4 @@
 module Htrans.Logger (
-  -- types
-  Priority(..),
   -- funcs
   setAppLogger,
   appName,
