@@ -9,11 +9,11 @@ import Graphics.X11.Xlib.Extras
 
 import qualified Data.Text as T hiding (map)
 import Codec.Binary.UTF8.String (decode)
-import Htrans.Cli (Config(..))
+import Htrans.Types (Config(..))
 
 xselect :: Config -> IO Config
 xselect cfg = 
-  case text cfg of
+  case textToTranslate cfg of
     Nothing -> do
       dpy <- openDisplay ""
       let dflt = defaultScreen dpy
@@ -29,7 +29,7 @@ xselect cfg =
         if ev_event_type ev == selectionNotify
           then do res <- getWindowProperty8 dpy clp win
                   destroyWindow dpy win
-                  return $ cfg {text = validateText (return T.pack <*> (return decode <*> (return (map fromIntegral) <*> res)))}
+                  return $ cfg {textToTranslate = validateText (return T.pack <*> (return decode <*> (return (map fromIntegral) <*> res)))}
           else do
                destroyWindow dpy win
                return cfg

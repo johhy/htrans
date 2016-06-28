@@ -5,7 +5,8 @@ module Main where
 import System.Exit (ExitCode(..), exitWith)
 import Htrans.Logger (setAppLogger, logStartAppDebug,
                       logStopAppDebug, logConfigDebug, logInOutInfo)
-import Htrans.Cli (Config(..), cli)
+import Htrans.Cli (cli)
+import Htrans.Types (Config(..))
 import Htrans.YandexTranslator (getTranslate)
 import Htrans.XSelector (xselect)
 import Htrans.EndPoint (showResult)
@@ -20,9 +21,9 @@ doTrans cfg = do
   logStartAppDebug
   logConfigDebug cfg
 
-  res <- getTranslate (key cfg) (from cfg) (to cfg) (text cfg)
+  res <- getTranslate (keyAPI cfg) (fromLang cfg) (toLang cfg) (textToTranslate cfg)
 
-  logInOutInfo (text cfg) res
+  logInOutInfo (textToTranslate cfg) res
   logStopAppDebug
 
   showResult cfg res
