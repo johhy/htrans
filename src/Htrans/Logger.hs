@@ -36,7 +36,7 @@ logStartAppDebug = debugM appName "---- Start translation! ----"
 logConfigDebug :: Show a => a -> IO ()
 logConfigDebug cfg = debugM appName ("Get configuration:" ++ show cfg)
 
-logInOutInfo :: [Char] -> [Char] -> IO ()
+logInOutInfo :: String -> String -> IO ()
 logInOutInfo input output = infoM appName ("input:"  ++ input ++
                                           " output:" ++ output)
 
