@@ -3,7 +3,6 @@
 module Main where
 
 import qualified Data.Text as T 
-import qualified Data.Text.IO as I
 import System.Exit (ExitCode(..), exitWith)
 import Htrans.Logger (setAppLogger, logStartAppDebug,
                       logStopAppDebug, logConfigDebug, logInOutInfo)
