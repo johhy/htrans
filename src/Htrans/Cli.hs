@@ -17,9 +17,8 @@ import Options.Applicative (Parser, execParser, value, fullDesc,
 import Options.Applicative.Arrows
 import Htrans.Logger (Priority(..))
 import Data.Char (toLower)
-
-appVersion :: String
-appVersion = "0.2.0.0"
+import Paths_htrans (version)
+import Data.Version (showVersion)
 
 data Config = Config
   {
@@ -76,9 +75,11 @@ opts = Config
     <>  short 's'
     <>  help "Show result on screen (use libnotify)" )
 
+getAppVersion :: String
+getAppVersion = showVersion version
 
-version :: Parser (a -> a)
-version = infoOption appVersion
+appVersion :: Parser (a -> a)
+appVersion = infoOption getAppVersion
       (long "version"
     <>  short 'v'
     <>  help "Show version")
@@ -86,7 +87,7 @@ version = infoOption appVersion
 parser :: Parser Config
 parser = runA $ proc () -> do 
   opt <- asA opts -< ()
-  A version -< opt
+  A appVersion -< opt
   
 cli :: IO Config
 cli = execParser
@@ -95,7 +96,7 @@ cli = execParser
     <> progDesc ("Translate text from one language to another\n" ++
                 "using Yandex Translate API\n" )
     <> header ("htrans - Yandex Translate API console tool\n" ++
-                "version " ++ appVersion))
+                "version " ++ getAppVersion))
 
 parseLang :: Monad m => String -> m Language
 parseLang st = return $ T.pack st
