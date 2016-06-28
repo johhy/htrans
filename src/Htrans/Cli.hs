@@ -2,7 +2,8 @@
 
 module Htrans.Cli (
   -- funcs
-  cli
+  cli,
+  appName
 
 ) where
 
@@ -15,8 +16,11 @@ import Data.Maybe
 import Htrans.Types
 
 
+appName :: String
+appName = "htranslator"
+
 getAppVersion :: T.Text 
-getAppVersion = T.pack $ showVersion version
+getAppVersion  = T.pack $ showVersion version
 
 defaultLangFrom :: Language
 defaultLangFrom = "en"
@@ -25,19 +29,19 @@ defaultLangTo   :: Language
 defaultLangTo   = "ru"
 
 defaultLogLevel :: LogLevel
-defaultLogLevel = EME
+defaultLogLevel =  EME
 
 defaultLogPath  :: FilePath
-defaultLogPath  = "./htrans.log"
+defaultLogPath  =  "./" ++ appName ++ ".log"
 
 defaultOnScreen :: Bool
-defaultOnScreen = False
+defaultOnScreen =  False
 
 cli :: IO Config
 cli = do
   x <- getRecord $ T.append "Translate text from one language to another\
           \ using Yandex Translate API ********\
-          \ htrans - Yandex Translate API console tool version: "  getAppVersion
+          \ translator - Yandex Translate API console tool version: "  getAppVersion
 
   return Config {
     textToTranslate = unHelpful $ text x,

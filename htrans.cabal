@@ -12,15 +12,16 @@ category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
 
-executable htrans
+library
   hs-source-dirs:      src
-  main-is:             Main.hs
-  other-modules:       Htrans.Logger,
+  exposed-modules:     Htrans.Logger,
                        Htrans.Cli,
-                       Htrans.YandexTranslator,
+                       Htrans.YandexTranslator, 
                        Htrans.XSelector,
                        Htrans.EndPoint,
-                       Htrans.Screener
+                       Htrans.Screener,
+                       Htrans.Types
+  other-modules:       Paths_htrans
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
                        yandex-translate,
@@ -35,4 +36,23 @@ executable htrans
                        libnotify,
                        filepath,
                        optparse-generic
+
+executable htranslator
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       htrans
+        --               yandex-translate,
+        --               data-default-class,
+        --               transformers,
+        --               text,
+        --               hslogger == 1.2.10,
+        --               X11>=1.3,
+        --               unix,
+        --               random>=1.0,
+        --               utf8-string >= 1.0,
+        --               libnotify,
+        --               filepath,
+        --               optparse-generic
 
