@@ -12,7 +12,7 @@ import Codec.Binary.UTF8.String (decode)
 import Htrans.Types (Config(..))
 
 xselect :: Config -> IO Config
-xselect cfg = 
+xselect cfg =
   case textToTranslate cfg of
     Nothing -> do
       dpy <- openDisplay ""
@@ -29,12 +29,12 @@ xselect cfg =
         if ev_event_type ev == selectionNotify
           then do res <- getWindowProperty8 dpy clp win
                   destroyWindow dpy win
-                  return $ cfg {textToTranslate = validateText (return T.pack <*> (return decode <*> (return (map fromIntegral) <*> res)))}
+                  return cfg {textToTranslate = mkNonEmpty =<< (decode . map fromIntegral <$> res)}
           else do
                destroyWindow dpy win
                return cfg
     _ -> return cfg
-    
-validateText :: Maybe T.Text -> Maybe T.Text
-validateText Nothing = Nothing
-validateText (Just x) = if T.null x then Nothing else Just x 
+
+mkNonEmpty :: String -> Maybe T.Text
+mkNonEmpty "" = Nothing
+mkNonEmpty s  = Just (T.pack s)
