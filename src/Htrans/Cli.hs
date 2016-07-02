@@ -7,13 +7,12 @@ module Htrans.Cli (
 
 ) where
 
-import Network.Yandex.Translate
 import qualified Data.Text as T
 import Paths_htrans (version)
 import Data.Version (showVersion)
 import Options.Generic
 import Data.Maybe
-import Htrans.Types
+import Htrans.Types (Lang(..), LogLevel(..), Config(..), Args(..))
 
 
 appName :: String
@@ -22,17 +21,18 @@ appName = "htranslator"
 getAppVersion :: T.Text 
 getAppVersion  = T.pack $ showVersion version
 
-defaultLangFrom :: Language
-defaultLangFrom = "en"
+defaultLangFrom :: Lang
+defaultLangFrom =  EN
 
-defaultLangTo   :: Language
-defaultLangTo   = "ru"
+defaultLangTo   :: Lang
+defaultLangTo   =  RU
 
 defaultLogLevel :: LogLevel
 defaultLogLevel =  EME
 
 defaultLogPath  :: FilePath
-defaultLogPath  =  "./" ++ appName ++ ".log"
+defaultLogPath  =  "./" ++
+  appName ++ ".log"
 
 defaultOnScreen :: Bool
 defaultOnScreen =  False
